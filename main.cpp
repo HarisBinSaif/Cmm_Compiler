@@ -65,6 +65,33 @@ bool checkIfDataType(char temp_word[]){
     return flag;
 }
 
+bool cmpString(char arr[][100], int row, char string[]){
+    bool flag = true;
+    int j = 0;
+    if(row==0){
+        return false;
+    }
+    else{
+        for(int i=0;i<row;i++){
+            j = 0;
+            if(strlen(arr[i])==strlen(string)){
+                while(j<strlen(string)){
+                    if(arr[i][j]!=string[j]){
+                        flag=false;
+                        break;
+                    }        
+                    j++;
+                }
+                if(j>=strlen(string)){
+                    return true;
+                }
+            }        
+        }
+    }
+    return false;
+}
+
+
 string getFilePath(){
     string file_path;
     cout<<"Please Enter the file path: ";
@@ -82,8 +109,9 @@ void lexical_analyzer(ifstream & file){
     string line;
     int line_number = 1;
     int char_index=0;
+    int index=0;
     char temp_word[50];
-    char sybol_table[100][50];
+    char symbol_Table[1024][100];;
     bool isComment = false;
     memset(temp_word, '\0',50);
     
@@ -94,6 +122,7 @@ void lexical_analyzer(ifstream & file){
                     isComment = false;
                 }
             }
+
             else{
                 if(isalpha(line[char_index])){
                     int temp_word_counter=0;
@@ -109,7 +138,14 @@ void lexical_analyzer(ifstream & file){
                             char_index++;
                         }
                         else{
-                            symboltable<<temp_word<<endl;
+                            if(cmpString(symbol_Table,index, temp_word)==false){
+                                for(int ind=0;ind<strlen(temp_word);ind++){
+                                    symbol_Table[index][ind] = temp_word[ind];
+                                }
+                                index++;
+                                cout<<temp_word<<endl;
+                                symboltable<<temp_word<<endl;
+                            }
                         }
                     }
                     else if(checkIfKeyword(temp_word)){
@@ -120,7 +156,14 @@ void lexical_analyzer(ifstream & file){
                     else{
                         // identifier
                         words<<"< ID, "<<temp_word<<" >"<<endl;
-                        symboltable<<temp_word<<endl;
+                        if(cmpString(symbol_Table,index, temp_word)==false){
+                                for(int ind=0;ind<strlen(temp_word);ind++){
+                                    symbol_Table[index][ind] = temp_word[ind];
+                                }
+                                index++;
+                                cout<<temp_word<<endl;
+                                symboltable<<temp_word<<endl;
+                            }  
                     }
                     memset(temp_word,'\0',50);
                     char_index--;
